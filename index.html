@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bitGEN — AI Vector &amp; Image Studio</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            display: ['"Syne"', '"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            studio: {
+              bg: '#0c0c11',
+              card: '#15151e',
+              elevated: '#1d1d29',
+              border: 'rgba(255, 255, 255, 0.08)',
+              accent: '#8b5cf6',
+              teal: '#2dd4bf',
+              lavender: '#ebe8ff',
+              indigo: '#190b47',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Rich handcrafted studio atmosphere with soft noise grain & organic blobs */
+    body {
+      background-color: #0c0c11;
+      background-image:
+        radial-gradient(ellipse 65% 45% at 8% 0%, rgba(139, 92, 246, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 40% at 95% 12%, rgba(45, 212, 191, 0.16) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 45% at 50% 100%, rgba(244, 114, 182, 0.08) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+
+    /* Tactile glass panel surface */
+    .studio-surface {
+      background: linear-gradient(165deg, rgba(26, 26, 37, 0.88) 0%, rgba(18, 18, 26, 0.94) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow:
+        0 24px 60px -15px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
+    }
+
+    /* Transparency checkerboard pattern for SVG preview stage */
+    .bg-checkerboard {
+      background-color: #12121a;
+      background-image:
+        linear-gradient(45deg, #1b1b26 25%, transparent 25%),
+        linear-gradient(-45deg, #1b1b26 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #1b1b26 75%),
+        linear-gradient(-45deg, transparent 75%, #1b1b26 75%);
+      background-size: 22px 22px;
+      background-position: 0 0, 0 11px, 11px -11px, -11px 0;
+    }
+
+    /* Subtle organic dot matrix for dark stage mode */
+    .bg-studio-grid {
+      background-color: #0b0b10;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Clean range input */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255, 255, 255, 0.12);
+      height: 5px;
+      border-radius: 9999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #ebe8ff;
+      cursor: pointer;
+      border: 2px solid #190b47;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 font-sans antialiased selection:bg-violet-500 selection:text-white flex flex-col">
+
+  <!-- ===================================================================== -->
+  <!-- FLOATING PILL STUDIO TOP BAR                                          -->
+  <!-- ===================================================================== -->
+  <header class="w-full sticky top-0 z-30 pt-3 px-4 sm:px-6 pointer-events-none">
+    <div class="max-w-[1360px] h-[58px] mx-auto px-4 sm:px-6 rounded-full studio-surface border border-white/[0.09] flex items-center justify-between gap-4 pointer-events-auto">
+
+      <!-- Left: Organic Pill Brand Mark + bitGEN Wordmark -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-violet-600 via-fuchsia-500 to-teal-400 p-[2px] shadow-lg shadow-violet-950/60">
+          <div class="w-full h-full rounded-full bg-[#0e0e14] flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="8" stroke="#ebe8ff" stroke-width="2" />
+              <circle cx="12" cy="12" r="3" fill="#2dd4bf" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-white">bitGEN</span>
+          <span class="hidden sm:inline-flex items-center px-3 py-0.5 rounded-full text-[11px] font-medium bg-white/[0.06] text-slate-300 border border-white/[0.08]">
+            by bitDroid
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: Private Studio Badge + API Key Button (No HTML Export / Source Copy) -->
+      <div class="flex items-center gap-2.5">
+        <span class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.07] text-[11px] text-slate-400">
+          <svg class="w-3 h-3 text-teal-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span>Proprietary Studio</span>
+        </span>
+
+        <button
+          id="openApiKeyModalBtn"
+          type="button"
+          class="h-9 px-4 rounded-full bg-studio-lavender hover:bg-white text-studio-indigo font-bold text-xs transition flex items-center gap-2 shadow-sm cursor-pointer"
+        >
+          <span id="apiStatusDot" class="w-2 h-2 rounded-full bg-teal-500"></span>
+          <span>API Key</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN TWO-COLUMN STUDIO WORKSPACE                                      -->
+  <!-- ===================================================================== -->
+  <main class="flex-1 max-w-[1360px] w-full mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- =================================================================== -->
+    <!-- LEFT PANE: ORGANIC CONTROL DECK (5/4 COLS)                          -->
+    <!-- =================================================================== -->
+    <aside class="lg:col-span-5 xl:col-span-4 studio-surface border border-white/[0.09] rounded-[30px] p-5 sm:p-6 flex flex-col gap-5">
+
+      <!-- Creation Mode Switcher (Coded Vector vs AI Image) -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-bold tracking-wide text-slate-300">Engine Mode</span>
+          <span id="modeHelperBadge" class="text-[11px] font-mono text-violet-400">Clean SVG Code</span>
+        </div>
+        <div class="grid grid-cols-2 p-1.5 rounded-full bg-[#0d0d13] border border-white/[0.08] gap-1">
+          <button
+            id="modeVectorBtn"
+            type="button"
+            class="py-2 px-3 rounded-full bg-violet-600/30 border border-violet-400/50 text-xs font-bold text-white transition flex flex-col items-center justify-center gap-0.5 cursor-pointer"
+          >
+            <span>Coded Vector</span>
+            <span class="text-[10px] font-normal text-violet-200/80">Scalable SVG</span>
+          </button>
+          <button
+            id="modeAiBtn"
+            type="button"
+            class="py-2 px-3 rounded-full border border-transparent hover:bg-white/[0.05] text-xs font-semibold text-slate-400 hover:text-white transition flex flex-col items-center justify-center gap-0.5 cursor-pointer"
+          >
+            <span>AI Image</span>
+            <span class="text-[10px] font-normal text-slate-500">Detailed &amp; Realistic</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Prompt Input Section -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between px-1">
+          <label for="promptInput" class="text-xs font-bold tracking-wide text-slate-300">
+            What do you want to create?
+          </label>
+          <button
+            id="clearPromptBtn"
+            type="button"
+            class="text-[11px] text-slate-500 hover:text-slate-300 transition cursor-pointer"
+          >
+            Clear
+          </button>
+        </div>
+        <textarea
+          id="promptInput"
+          rows="3"
+          placeholder="Describe anything you want to make..."
+          class="w-full bg-[#0d0d13] border border-white/[0.1] focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 focus:outline-none rounded-2xl p-3.5 text-sm text-white placeholder-slate-500 resize-none transition leading-relaxed"
+        ></textarea>
+
+        <!-- Generic Quick-Start Prompt Chips -->
+        <div class="flex flex-wrap gap-1.5 pt-0.5">
+          <button type="button" data-prompt="Geometric mountain crest with sharp faceted peaks, rising sun disc, and clean circular emblem framing" class="quick-chip px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.07] text-[11px] text-slate-300 transition cursor-pointer">
+            Mountain logo
+          </button>
+          <button type="button" data-prompt="Minimalist audio wave emblem with symmetrical equalizer bars and glowing gradient pulse rings" class="quick-chip px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.07] text-[11px] text-slate-300 transition cursor-pointer">
+            Music wave icon
+          </button>
+          <button type="button" data-prompt="Futuristic circuit fox head icon built from clean angular polygons and glowing trace lines" class="quick-chip px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.07] text-[11px] text-slate-300 transition cursor-pointer">
+            Cyber fox
+          </button>
+          <button type="button" data-prompt="Abstract glass prism refracting crisp beams of light on a deep dark geometric badge" class="quick-chip px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.07] text-[11px] text-slate-300 transition cursor-pointer">
+            Glass prism
+          </button>
+        </div>
+      </div>
+
+      <!-- Aspect Ratio & Canvas Dimensions Selector -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-bold tracking-wide text-slate-300">Canvas Size</span>
+          <span id="activeRatioSummary" class="text-[11px] font-mono text-teal-400">1:1 &middot; 512&times;512</span>
+        </div>
+        <div id="aspectRatioGrid" class="grid grid-cols-3 gap-2">
+          <button type="button" data-ratio="1:1" data-width="512" data-height="512" data-label="Square" class="ratio-pill active p-2.5 rounded-2xl border border-violet-400/60 bg-violet-500/15 text-left transition flex flex-col gap-1 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white">1:1</span>
+              <span class="w-3.5 h-3.5 rounded-full border border-violet-300 bg-violet-400/20"></span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-300 leading-none">512&times;512</span>
+          </button>
+
+          <button type="button" data-ratio="16:9" data-width="960" data-height="540" data-label="Widescreen" class="ratio-pill p-2.5 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-left transition flex flex-col gap-1 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200">16:9</span>
+              <span class="w-4 h-2.5 rounded-full border border-slate-400"></span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400 leading-none">960&times;540</span>
+          </button>
+
+          <button type="button" data-ratio="9:16" data-width="540" data-height="960" data-label="Vertical" class="ratio-pill p-2.5 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-left transition flex flex-col gap-1 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200">9:16</span>
+              <span class="w-2.5 h-4 rounded-full border border-slate-400"></span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400 leading-none">540&times;960</span>
+          </button>
+
+          <button type="button" data-ratio="4:3" data-width="800" data-height="600" data-label="Classic" class="ratio-pill p-2.5 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-left transition flex flex-col gap-1 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200">4:3</span>
+              <span class="w-4 h-3 rounded-full border border-slate-400"></span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400 leading-none">800&times;600</span>
+          </button>
+
+          <button type="button" data-ratio="21:9" data-width="1050" data-height="450" data-label="Ultrawide" class="ratio-pill p-2.5 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-left transition flex flex-col gap-1 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200">21:9</span>
+              <span class="w-5 h-2 rounded-full border border-slate-400"></span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400 leading-none">1050&times;450</span>
+          </button>
+
+          <button type="button" data-ratio="3:2" data-width="768" data-height="512" data-label="Photo" class="ratio-pill p-2.5 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-left transition flex flex-col gap-1 cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-200">3:2</span>
+              <span class="w-4 h-2.5 rounded-full border border-slate-400"></span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400 leading-none">768&times;512</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Style Preset Segmented Pills -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-bold tracking-wide text-slate-300">Style</span>
+          <span id="styleHintText" class="text-[10px] text-slate-400">Works in both modes</span>
+        </div>
+        <div id="styleGrid" class="grid grid-cols-2 gap-1.5">
+          <button type="button" data-style-key="flat" data-style="Flat Vector Icon designed for high clarity at small sizes, bold silhouette, and clean negative space" class="style-pill active px-3.5 py-2 rounded-full border border-violet-400/60 bg-violet-500/15 text-xs font-semibold text-white text-left transition cursor-pointer">
+            Flat Icon
+          </button>
+          <button type="button" data-style-key="realistic" data-requires-ai="true" data-style="Photorealistic studio render with lifelike textures, natural lighting, realistic shadows, and high detail" class="style-pill px-3.5 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 text-left transition flex items-center justify-between gap-1 cursor-pointer">
+            <span>Realistic</span>
+            <span class="px-1.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 text-[9px] font-bold uppercase tracking-wide">AI</span>
+          </button>
+          <button type="button" data-style-key="geometric" data-style="Minimalist Geometric artwork using clean shapes, balanced symmetry, and sharp precision" class="style-pill px-3.5 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 text-left transition cursor-pointer">
+            Geometric
+          </button>
+          <button type="button" data-style-key="cyber" data-style="Cyberpunk Emblem with futuristic armor lines, glowing neon highlights, and dark tech aesthetics" class="style-pill px-3.5 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 text-left transition cursor-pointer">
+            Cyberpunk
+          </button>
+          <button type="button" data-style-key="gradient" data-style="Smooth Gradient artwork with flowing layered curves, vibrant color blends, and soft ambient glow" class="style-pill px-3.5 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 text-left transition cursor-pointer">
+            Smooth Gradient
+          </button>
+          <button type="button" data-style-key="3d" data-style="3D Isometric illustration with clean depth, shaded planes, and crisp studio lighting" class="style-pill px-3.5 py-2 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 text-left transition cursor-pointer">
+            3D Isometric
+          </button>
+        </div>
+      </div>
+
+      <!-- Color Palette Segmented Pills -->
+      <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold tracking-wide text-slate-300 px-1">Colors</span>
+        <div id="paletteGrid" class="flex flex-wrap gap-1.5">
+          <button type="button" data-palette="deep obsidian dark background with electric violet (#8b5cf6), soft lavender (#ebe8ff), and vibrant teal (#2dd4bf)" class="palette-pill active px-3 py-1.5 rounded-full border border-teal-400/60 bg-teal-500/15 text-xs font-semibold text-white flex items-center gap-1.5 transition cursor-pointer">
+            <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-violet-500 to-teal-400"></span>
+            Purple &amp; Teal
+          </button>
+          <button type="button" data-palette="sleek monochrome dark charcoal, matte slate grays, brushed silver, and crisp pure white highlights" class="palette-pill px-3 py-1.5 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 flex items-center gap-1.5 transition cursor-pointer">
+            <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-slate-200 to-slate-600"></span>
+            Black &amp; White
+          </button>
+          <button type="button" data-palette="vibrant neon synthwave magenta, electric cyan, and deep midnight indigo" class="palette-pill px-3 py-1.5 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 flex items-center gap-1.5 transition cursor-pointer">
+            <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-fuchsia-500 to-cyan-400"></span>
+            Neon Glow
+          </button>
+          <button type="button" data-palette="warm solar amber, burnt coral orange, and deep espresso obsidian" class="palette-pill px-3 py-1.5 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 flex items-center gap-1.5 transition cursor-pointer">
+            <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"></span>
+            Warm Sunset
+          </button>
+          <button type="button" data-palette="crisp arctic cyan, glacial ice blue, and deep navy slate" class="palette-pill px-3 py-1.5 rounded-full border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] text-xs font-medium text-slate-300 flex items-center gap-1.5 transition cursor-pointer">
+            <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-sky-300 to-blue-600"></span>
+            Ocean Blue
+          </button>
+        </div>
+      </div>
+
+      <!-- Primary Generate Pill Button -->
+      <button
+        id="generateBtn"
+        type="button"
+        class="w-full h-12 rounded-full bg-gradient-to-r from-violet-600 via-indigo-500 to-teal-500 hover:from-violet-500 hover:to-teal-400 text-white font-bold text-sm shadow-lg shadow-violet-950/60 active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+      >
+        <svg id="generateSpinner" class="hidden animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span id="generateBtnLabel">Generate Vector</span>
+      </button>
+
+      <!-- Recent Generations Strip -->
+      <div class="border-t border-white/[0.08] pt-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-[11px] font-bold tracking-wide text-slate-400">Your Recents</span>
+          <span id="lineCountText" class="text-[11px] font-mono text-slate-500">SVG Mode</span>
+        </div>
+        <div id="historyStrip" class="flex items-center gap-2 overflow-x-auto pb-1 min-h-[48px]"></div>
+      </div>
+
+    </aside>
+
+    <!-- =================================================================== -->
+    <!-- RIGHT PANE: INTERACTIVE VIEWPORT & CODE INSPECTOR (7/8 COLS)        -->
+    <!-- =================================================================== -->
+    <section class="lg:col-span-7 xl:col-span-8 studio-surface border border-white/[0.09] rounded-[30px] flex flex-col overflow-hidden">
+
+      <!-- Top Toolbar inside Viewport Card -->
+      <div class="px-4 sm:px-6 py-3.5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-3 bg-white/[0.02]">
+
+        <!-- Segmented Pill View Tabs: Preview | Code | Split View -->
+        <div id="viewModeTabsWrapper" class="inline-flex p-1 rounded-full bg-[#0d0d13] border border-white/[0.08]">
+          <button
+            id="viewCanvasBtn"
+            type="button"
+            class="view-tab px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.14] text-white transition cursor-pointer"
+          >
+            Preview
+          </button>
+          <button
+            id="viewCodeBtn"
+            type="button"
+            class="view-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-400 hover:text-white transition cursor-pointer"
+          >
+            SVG Code
+          </button>
+          <button
+            id="viewSplitBtn"
+            type="button"
+            class="view-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-400 hover:text-white transition cursor-pointer"
+          >
+            Split View
+          </button>
+        </div>
+
+        <!-- Stage Controls: Dimension Badge, Circle Mask, Background Toggle, Zoom -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          <span
+            id="viewportDimensionBadge"
+            class="h-8 px-3 rounded-full bg-violet-500/15 border border-violet-400/30 text-[11px] font-mono font-semibold text-violet-200 inline-flex items-center"
+          >
+            1:1 &middot; 512&times;512
+          </span>
+
+          <button
+            id="circleMaskToggleBtn"
+            type="button"
+            class="h-8 px-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-300 transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <span class="w-3 h-3 rounded-full border border-current inline-block"></span>
+            <span>Circle Mask</span>
+          </button>
+
+          <button
+            id="bgPatternToggleBtn"
+            type="button"
+            class="h-8 px-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-300 transition cursor-pointer"
+          >
+            Grid: Dots
+          </button>
+
+          <div class="hidden sm:flex items-center gap-2 pl-1">
+            <span class="text-[11px] font-mono text-slate-400" id="zoomReadout">100%</span>
+            <input id="zoomRange" type="range" min="60" max="150" value="100" class="w-20" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Viewport Body (Supports Canvas Only, Code Only, or Split View) -->
+      <div id="viewportBody" class="grid grid-cols-1 min-h-[460px] sm:min-h-[520px]">
+
+        <!-- CANVAS PREVIEW PANE -->
+        <div id="canvasPane" class="bg-studio-grid relative flex flex-col items-center justify-center p-6 sm:p-8 gap-6 overflow-hidden">
+          <div id="stageAspectFrame" class="relative w-full max-w-[380px] aspect-square flex items-center justify-center transition-all duration-200">
+            <!-- Scaled Vector Wrapper -->
+            <div
+              id="svgStageWrapper"
+              class="w-full h-full rounded-[26px] overflow-hidden shadow-2xl ring-1 ring-white/15 transition-transform duration-150 flex items-center justify-center bg-[#111116]"
+            ></div>
+
+            <!-- AI Raster Image Wrapper -->
+            <div
+              id="aiImageStageWrapper"
+              class="hidden w-full h-full rounded-[26px] overflow-hidden shadow-2xl ring-1 ring-white/15 transition-transform duration-150 flex items-center justify-center bg-[#111116]"
+            >
+              <img id="aiGeneratedImg" alt="AI generated artwork" class="w-full h-full object-cover block" />
+            </div>
+
+            <!-- Optional Circular Avatar Crop Guide -->
+            <div id="circleMaskGuide" class="hidden pointer-events-none absolute inset-0">
+              <svg id="circleMaskSvg" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+                <defs>
+                  <mask id="stageCircleHole">
+                    <rect id="maskBgRect" width="512" height="512" fill="white" />
+                    <circle id="maskCutoutCircle" cx="256" cy="256" r="248" fill="black" />
+                  </mask>
+                </defs>
+                <rect id="maskOverlayRect" width="512" height="512" fill="rgba(12, 12, 17, 0.78)" mask="url(#stageCircleHole)" />
+                <circle id="maskRingCircle" cx="256" cy="256" r="248" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="8 6" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Small-Scale Icon Legibility Preview Pill Strip (16px, 32px, 64px) -->
+          <div class="w-full max-w-[460px] px-5 py-3 rounded-full bg-[#111118]/90 border border-white/[0.09] backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shadow-lg">
+            <div class="flex flex-col pl-1">
+              <span class="text-[11px] font-bold text-slate-200">Icon Size Check</span>
+              <span class="text-[10px] text-slate-500">16px &middot; 32px &middot; 64px</span>
+            </div>
+            <div class="flex items-center gap-3.5 pr-1">
+              <!-- 16px Favicon / Tray Size -->
+              <div class="flex items-center gap-1.5">
+                <div class="w-6 h-6 rounded-full bg-white/[0.04] border border-white/[0.09] flex items-center justify-center">
+                  <img id="miniPreview16" alt="16px preview" class="w-[16px] h-[16px] object-contain rounded-full" />
+                </div>
+                <span class="text-[9px] font-mono text-slate-400">16</span>
+              </div>
+              <!-- 32px App Bar / Avatar Size -->
+              <div class="flex items-center gap-1.5">
+                <div class="w-9 h-9 rounded-full bg-white/[0.04] border border-white/[0.09] flex items-center justify-center">
+                  <img id="miniPreview32" alt="32px preview" class="w-[32px] h-[32px] object-contain rounded-full" />
+                </div>
+                <span class="text-[9px] font-mono text-slate-400">32</span>
+              </div>
+              <!-- 64px Launcher / Badge Size -->
+              <div class="flex items-center gap-1.5">
+                <div class="w-12 h-12 rounded-full bg-white/[0.04] border border-white/[0.09] flex items-center justify-center">
+                  <img id="miniPreview64" alt="64px preview" class="w-[40px] h-[40px] object-contain rounded-full" />
+                </div>
+                <span class="text-[9px] font-mono text-slate-400">64</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SVG CODE INSPECTOR PANE -->
+        <div id="codePane" class="hidden flex-col bg-[#0c0c11] border-t lg:border-t-0 border-white/[0.08]">
+          <div class="px-4 py-2.5 border-b border-white/[0.07] flex items-center justify-between bg-[#12121a]">
+            <span id="codeDimensionsLabel" class="text-[11px] font-mono text-slate-400">vector.svg &mdash; 512&times;512 XML</span>
+            <div class="flex items-center gap-2">
+              <button
+                id="applyEditsBtn"
+                type="button"
+                class="h-7 px-3 rounded-full bg-violet-500/20 hover:bg-violet-500/30 border border-violet-400/40 text-[11px] font-semibold text-violet-200 transition cursor-pointer"
+              >
+                Apply Edits
+              </button>
+            </div>
+          </div>
+          <textarea
+            id="svgCodeEditor"
+            spellcheck="false"
+            class="flex-1 w-full min-h-[380px] bg-transparent p-4 font-mono text-xs text-slate-200 leading-relaxed focus:outline-none resize-none"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Bottom Export & Status Footer Bar -->
+      <div class="px-4 sm:px-6 py-4 border-t border-white/[0.08] bg-white/[0.02] flex flex-wrap items-center justify-between gap-3">
+        <span id="statusBadge" class="text-xs text-slate-400">Ready</span>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id="downloadSvgBtn"
+            type="button"
+            class="h-9 px-4 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.09] text-xs font-semibold text-slate-200 transition cursor-pointer"
+          >
+            Download .SVG
+          </button>
+          <button
+            id="downloadPng1xBtn"
+            type="button"
+            class="h-9 px-4 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.09] text-xs font-semibold text-slate-200 transition cursor-pointer"
+          >
+            Download PNG (512&times;512)
+          </button>
+          <button
+            id="downloadPng2xBtn"
+            type="button"
+            class="h-9 px-4 rounded-full bg-studio-lavender hover:bg-white text-studio-indigo text-xs font-bold transition cursor-pointer shadow-sm"
+          >
+            Download HD PNG (1024&times;1024)
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- SINGLE-LINE STUDIO FOOTER                                             -->
+  <!-- ===================================================================== -->
+  <footer class="w-full py-5 px-4 sm:px-6 mt-auto">
+    <div class="max-w-[1360px] mx-auto px-5 py-3 rounded-full bg-white/[0.03] border border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+      <span>bitGEN &mdash; All Rights Reserved</span>
+      <span class="text-slate-300 font-medium">Made by <strong class="text-white font-semibold">@cashhwocky</strong>, <span class="text-teal-400 font-semibold">bitDroid Dev</span></span>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- CLEAN API KEY MODAL                                                   -->
+  <!-- ===================================================================== -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md studio-surface border border-white/[0.12] rounded-[28px] p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-bold text-white">Gemini API Configuration</h2>
+        <button id="closeModalBtn" type="button" class="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center text-xs cursor-pointer">
+          ✕
+        </button>
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Enter your Google AI Studio Gemini API key to generate vectors and images. Your key is stored locally in your own browser.
+      </p>
+      <input
+        id="apiKeyInput"
+        type="password"
+        placeholder="AIzaSy..."
+        class="w-full bg-[#0d0d13] border border-white/[0.12] focus:border-violet-400 focus:outline-none rounded-full px-4 py-2.5 text-xs text-white font-mono"
+      />
+      <div class="flex items-center gap-2">
+        <button
+          id="saveApiKeyBtn"
+          type="button"
+          class="flex-1 h-9 rounded-full bg-studio-lavender hover:bg-white text-studio-indigo font-bold text-xs transition cursor-pointer"
+        >
+          Save Key
+        </button>
+        <button
+          id="removeApiKeyBtn"
+          type="button"
+          class="h-9 px-4 rounded-full bg-white/[0.06] hover:bg-rose-500/20 border border-white/[0.08] text-xs font-medium text-slate-300 hover:text-rose-300 transition cursor-pointer"
+        >
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Casual right-click & view-source shortcut deterrent for proprietary feel
+    document.addEventListener('contextmenu', (e) => {
+      if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT') {
+        e.preventDefault();
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'u' || e.key.toLowerCase() === 's')) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // =========================================================================
+      // NEUTRAL BITGEN ABSTRACT GEOMETRIC PLACEHOLDER SVG
+      // =========================================================================
+      const DEFAULT_BITGEN_SVG = `<svg viewBox="0 0 512 512" width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#13131b" />
+      <stop offset="100%" stop-color="#0d0d12" />
+    </linearGradient>
+    <linearGradient id="hexPrismGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="55%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#2dd4bf" />
+    </linearGradient>
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.32" />
+      <stop offset="65%" stop-color="#2dd4bf" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#111116" stop-opacity="0" />
+    </radialGradient>
+    <filter id="neonBlur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Studio Canvas Backdrop -->
+  <rect width="512" height="512" fill="url(#bgGrad)" />
+  <circle cx="256" cy="256" r="210" fill="url(#coreGlow)" />
+
+  <!-- Subtle Outer Coordinate Rings -->
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1.5" />
+  <circle cx="256" cy="256" r="154" fill="none" stroke="#8b5cf6" stroke-opacity="0.22" stroke-width="1.5" stroke-dasharray="6 6" />
+
+  <!-- Outer Geometric Hexagon -->
+  <polygon
+    points="256,104 388,180 388,332 256,408 124,332 124,180"
+    fill="#171722"
+    stroke="url(#hexPrismGrad)"
+    stroke-width="4"
+    stroke-linejoin="round"
+  />
+
+  <!-- Isometric Inner Facets -->
+  <polygon points="256,104 388,180 256,256 124,180" fill="#8b5cf6" fill-opacity="0.16" />
+  <polygon points="124,180 256,256 256,408 124,332" fill="#1e1b38" fill-opacity="0.7" />
+  <polygon points="388,180 388,332 256,408 256,256" fill="#0f2e33" fill-opacity="0.65" />
+
+  <!-- Internal Axis Lines -->
+  <line x1="256" y1="104" x2="256" y2="408" stroke="#ebe8ff" stroke-opacity="0.18" stroke-width="1.5" />
+  <line x1="124" y1="180" x2="388" y2="332" stroke="#ebe8ff" stroke-opacity="0.18" stroke-width="1.5" />
+  <line x1="388" y1="180" x2="124" y2="332" stroke="#ebe8ff" stroke-opacity="0.18" stroke-width="1.5" />
+
+  <!-- Center Vector Core Node -->
+  <polygon
+    points="256,204 301,230 301,282 256,308 211,282 211,230"
+    fill="#111116"
+    stroke="#2dd4bf"
+    stroke-width="3"
+    filter="url(#neonBlur)"
+  />
+  <circle cx="256" cy="256" r="14" fill="#ebe8ff" />
+</svg>`;
+
+      // =========================================================================
+      // APPLICATION STATE & DOM REFERENCES
+      // =========================================================================
+      const API_KEY_STORAGE = 'bitgen_gemini_api_key';
+
+      const state = {
+        engineMode: 'vector', // 'vector' (Coded SVG) | 'ai' (AI Image Generative)
+        currentSvg: DEFAULT_BITGEN_SVG,
+        currentAiDataUrl: '',
+        aspectRatio: '1:1',
+        width: 512,
+        height: 512,
+        ratioLabel: 'Square',
+        selectedStyleKey: 'flat',
+        selectedStyle: 'Flat Vector Icon designed for high clarity at small sizes, bold silhouette, and clean negative space',
+        selectedPalette: 'deep obsidian dark background with electric violet (#8b5cf6), soft lavender (#ebe8ff), and vibrant teal (#2dd4bf)',
+        viewMode: 'canvas', // 'canvas' | 'code' | 'split'
+        circleMask: false,
+        checkerboard: false,
+        zoom: 1,
+        history: []
+      };
+
+      // Left Pane Controls
+      const modeVectorBtn = document.getElementById('modeVectorBtn');
+      const modeAiBtn = document.getElementById('modeAiBtn');
+      const modeHelperBadge = document.getElementById('modeHelperBadge');
+      const styleHintText = document.getElementById('styleHintText');
+      const promptInput = document.getElementById('promptInput');
+      const clearPromptBtn = document.getElementById('clearPromptBtn');
+      const activeRatioSummary = document.getElementById('activeRatioSummary');
+      const generateBtn = document.getElementById('generateBtn');
+      const generateSpinner = document.getElementById('generateSpinner');
+      const generateBtnLabel = document.getElementById('generateBtnLabel');
+      const historyStrip = document.getElementById('historyStrip');
+      const lineCountText = document.getElementById('lineCountText');
+
+      // Right Pane Controls & Viewports
+      const viewModeTabsWrapper = document.getElementById('viewModeTabsWrapper');
+      const viewCanvasBtn = document.getElementById('viewCanvasBtn');
+      const viewCodeBtn = document.getElementById('viewCodeBtn');
+      const viewSplitBtn = document.getElementById('viewSplitBtn');
+      const viewportDimensionBadge = document.getElementById('viewportDimensionBadge');
+      const circleMaskToggleBtn = document.getElementById('circleMaskToggleBtn');
+      const bgPatternToggleBtn = document.getElementById('bgPatternToggleBtn');
+      const zoomRange = document.getElementById('zoomRange');
+      const zoomReadout = document.getElementById('zoomReadout');
+
+      const viewportBody = document.getElementById('viewportBody');
+      const canvasPane = document.getElementById('canvasPane');
+      const codePane = document.getElementById('codePane');
+      const stageAspectFrame = document.getElementById('stageAspectFrame');
+      const svgStageWrapper = document.getElementById('svgStageWrapper');
+      const aiImageStageWrapper = document.getElementById('aiImageStageWrapper');
+      const aiGeneratedImg = document.getElementById('aiGeneratedImg');
+      const circleMaskGuide = document.getElementById('circleMaskGuide');
+      const circleMaskSvg = document.getElementById('circleMaskSvg');
+      const maskBgRect = document.getElementById('maskBgRect');
+      const maskCutoutCircle = document.getElementById('maskCutoutCircle');
+      const maskOverlayRect = document.getElementById('maskOverlayRect');
+      const maskRingCircle = document.getElementById('maskRingCircle');
+      const codeDimensionsLabel = document.getElementById('codeDimensionsLabel');
+      const svgCodeEditor = document.getElementById('svgCodeEditor');
+      const applyEditsBtn = document.getElementById('applyEditsBtn');
+      const miniPreview16 = document.getElementById('miniPreview16');
+      const miniPreview32 = document.getElementById('miniPreview32');
+      const miniPreview64 = document.getElementById('miniPreview64');
+
+      // Export & Status Controls
+      const statusBadge = document.getElementById('statusBadge');
+      const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+      const downloadPng1xBtn = document.getElementById('downloadPng1xBtn');
+      const downloadPng2xBtn = document.getElementById('downloadPng2xBtn');
+
+      // API Key Modal Controls
+      const openApiKeyModalBtn = document.getElementById('openApiKeyModalBtn');
+      const apiKeyModal = document.getElementById('apiKeyModal');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+      const removeApiKeyBtn = document.getElementById('removeApiKeyBtn');
+      const apiStatusDot = document.getElementById('apiStatusDot');
+
+      // =========================================================================
+      // STATUS FEEDBACK HELPER
+      // =========================================================================
+      function setStatus(message, type = 'neutral') {
+        statusBadge.textContent = message;
+        statusBadge.className = 'text-xs transition-colors ';
+        if (type === 'success') {
+          statusBadge.className += 'text-teal-400 font-medium';
+        } else if (type === 'error') {
+          statusBadge.className += 'text-rose-400 font-medium';
+        } else {
+          statusBadge.className += 'text-slate-400';
+        }
+      }
+
+      // =========================================================================
+      // API KEY MANAGEMENT
+      // =========================================================================
+      function getStoredApiKey() {
+        try {
+          return (localStorage.getItem(API_KEY_STORAGE) || '').trim();
+        } catch (e) {
+          return '';
+        }
+      }
+
+      function updateApiStatusIndicator() {
+        const key = getStoredApiKey();
+        apiKeyInput.value = key;
+        apiStatusDot.className = key
+          ? 'w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_8px_#2dd4bf]'
+          : 'w-2 h-2 rounded-full bg-violet-400';
+      }
+
+      openApiKeyModalBtn.addEventListener('click', () => {
+        updateApiStatusIndicator();
+        apiKeyModal.classList.remove('hidden');
+      });
+
+      closeModalBtn.addEventListener('click', () => apiKeyModal.classList.add('hidden'));
+      apiKeyModal.addEventListener('click', (e) => {
+        if (e.target === apiKeyModal) apiKeyModal.classList.add('hidden');
+      });
+
+      saveApiKeyBtn.addEventListener('click', () => {
+        try {
+          const val = apiKeyInput.value.trim();
+          if (val) {
+            localStorage.setItem(API_KEY_STORAGE, val);
+            setStatus('API key saved locally.', 'success');
+          } else {
+            localStorage.removeItem(API_KEY_STORAGE);
+            setStatus('Custom API key removed.', 'neutral');
+          }
+          updateApiStatusIndicator();
+          apiKeyModal.classList.add('hidden');
+        } catch (e) {
+          setStatus('Unable to access localStorage.', 'error');
+        }
+      });
+
+      removeApiKeyBtn.addEventListener('click', () => {
+        try {
+          localStorage.removeItem(API_KEY_STORAGE);
+          updateApiStatusIndicator();
+          apiKeyModal.classList.add('hidden');
+          setStatus('API key cleared.', 'neutral');
+        } catch (e) {}
+      });
+
+      updateApiStatusIndicator();
+
+      // =========================================================================
+      // ASPECT RATIO & VIEWPORT DIMENSION SYNCHRONIZATION
+      // =========================================================================
+      function syncViewportDimensions(width, height, ratioStr = null) {
+        state.width = width;
+        state.height = height;
+        if (ratioStr) {
+          state.aspectRatio = ratioStr;
+        }
+
+        const badgeLabel = `${state.aspectRatio} · ${width}×${height}`;
+        activeRatioSummary.textContent = badgeLabel;
+        viewportDimensionBadge.textContent = badgeLabel;
+        codeDimensionsLabel.textContent = `vector.svg — ${width}×${height} XML`;
+
+        // Update PNG export button labels for 1x Native and 2x HD
+        downloadPng1xBtn.textContent = `Download PNG (${width}×${height})`;
+        downloadPng2xBtn.textContent = `Download HD PNG (${width * 2}×${height * 2})`;
+
+        // Dynamically adapt stage frame aspect ratio and responsive bounding size
+        stageAspectFrame.style.aspectRatio = `${width} / ${height}`;
+        if (width > height) {
+          // Landscape / Widescreen / Ultrawide
+          stageAspectFrame.style.maxWidth = '560px';
+          stageAspectFrame.style.maxHeight = '380px';
+        } else if (height > width) {
+          // Vertical / Portrait
+          stageAspectFrame.style.maxWidth = '245px';
+          stageAspectFrame.style.maxHeight = '440px';
+        } else {
+          // 1:1 Square
+          stageAspectFrame.style.maxWidth = '380px';
+          stageAspectFrame.style.maxHeight = '380px';
+        }
+
+        // Update circle crop overlay geometry to match the active canvas dimensions
+        const minSide = Math.min(width, height);
+        const cx = width / 2;
+        const cy = height / 2;
+        const r = Math.max(10, minSide / 2 - 8);
+
+        circleMaskSvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        maskBgRect.setAttribute('width', width);
+        maskBgRect.setAttribute('height', height);
+        maskOverlayRect.setAttribute('width', width);
+        maskOverlayRect.setAttribute('height', height);
+        maskCutoutCircle.setAttribute('cx', cx);
+        maskCutoutCircle.setAttribute('cy', cy);
+        maskCutoutCircle.setAttribute('r', r);
+        maskRingCircle.setAttribute('cx', cx);
+        maskRingCircle.setAttribute('cy', cy);
+        maskRingCircle.setAttribute('r', r);
+      }
+
+      function buildAdaptivePlaceholderSvg(width, height) {
+        const cx = width / 2;
+        const cy = height / 2;
+        const minDim = Math.min(width, height);
+        const outerR = Math.round(minDim * 0.38);
+        const innerR = Math.round(minDim * 0.29);
+        const hexR = Math.round(minDim * 0.30);
+        const coreR = Math.round(minDim * 0.10);
+
+        const hexPoints = (r) => {
+          const pts = [];
+          for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 180) * (60 * i - 90);
+            pts.push(`${Math.round(cx + r * Math.cos(angle))},${Math.round(cy + r * Math.sin(angle))}`);
+          }
+          return pts.join(' ');
+        };
+
+        const pTop = `${cx},${cy - hexR}`;
+        const pTopRight = `${Math.round(cx + hexR * 0.866)},${Math.round(cy - hexR * 0.5)}`;
+        const pBottomRight = `${Math.round(cx + hexR * 0.866)},${Math.round(cy + hexR * 0.5)}`;
+        const pBottom = `${cx},${cy + hexR}`;
+        const pBottomLeft = `${Math.round(cx - hexR * 0.866)},${Math.round(cy + hexR * 0.5)}`;
+        const pTopLeft = `${Math.round(cx - hexR * 0.866)},${Math.round(cy - hexR * 0.5)}`;
+
+        return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#13131b" />
+      <stop offset="100%" stop-color="#0d0d12" />
+    </linearGradient>
+    <linearGradient id="hexPrismGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="55%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#2dd4bf" />
+    </linearGradient>
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.32" />
+      <stop offset="65%" stop-color="#2dd4bf" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#111116" stop-opacity="0" />
+    </radialGradient>
+    <filter id="neonBlur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="${width}" height="${height}" fill="url(#bgGrad)" />
+  <circle cx="${cx}" cy="${cy}" r="${Math.round(minDim * 0.42)}" fill="url(#coreGlow)" />
+  <circle cx="${cx}" cy="${cy}" r="${outerR}" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1.5" />
+  <circle cx="${cx}" cy="${cy}" r="${innerR}" fill="none" stroke="#8b5cf6" stroke-opacity="0.22" stroke-width="1.5" stroke-dasharray="6 6" />
+  <polygon points="${hexPoints(hexR)}" fill="#171722" stroke="url(#hexPrismGrad)" stroke-width="4" stroke-linejoin="round" />
+  <polygon points="${pTop} ${pTopRight} ${cx},${cy} ${pTopLeft}" fill="#8b5cf6" fill-opacity="0.16" />
+  <polygon points="${pTopLeft} ${cx},${cy} ${pBottom} ${pBottomLeft}" fill="#1e1b38" fill-opacity="0.7" />
+  <polygon points="${pTopRight} ${pBottomRight} ${pBottom} ${cx},${cy}" fill="#0f2e33" fill-opacity="0.65" />
+  <polygon points="${hexPoints(coreR)}" fill="#111116" stroke="#2dd4bf" stroke-width="3" filter="url(#neonBlur)" />
+  <circle cx="${cx}" cy="${cy}" r="${Math.max(6, Math.round(minDim * 0.028))}" fill="#ebe8ff" />
+</svg>`;
+      }
+
+      function updateMiniPreviews(srcUrl) {
+        if (miniPreview16) miniPreview16.src = srcUrl;
+        if (miniPreview32) miniPreview32.src = srcUrl;
+        if (miniPreview64) miniPreview64.src = srcUrl;
+      }
+
+      // =========================================================================
+      // CREATION MODE SWITCHER (CODED VECTOR vs AI IMAGE)
+      // =========================================================================
+      function setEngineMode(newMode, forceReason = null) {
+        state.engineMode = newMode;
+
+        if (newMode === 'vector') {
+          modeVectorBtn.className = 'py-2 px-3 rounded-full bg-violet-600/30 border border-violet-400/50 text-xs font-bold text-white transition flex flex-col items-center justify-center gap-0.5 cursor-pointer';
+          modeVectorBtn.querySelector('span:last-child').className = 'text-[10px] font-normal text-violet-200/80';
+
+          modeAiBtn.className = 'py-2 px-3 rounded-full border border-transparent hover:bg-white/[0.05] text-xs font-semibold text-slate-400 hover:text-white transition flex flex-col items-center justify-center gap-0.5 cursor-pointer';
+          modeAiBtn.querySelector('span:last-child').className = 'text-[10px] font-normal text-slate-500';
+
+          modeHelperBadge.textContent = 'Clean SVG Code';
+          modeHelperBadge.className = 'text-[11px] font-mono text-violet-400';
+          generateBtnLabel.textContent = 'Generate Vector';
+          lineCountText.textContent = `${state.currentSvg.split('\n').length} lines`;
+
+          // Show SVG stage & SVG code tabs
+          svgStageWrapper.classList.remove('hidden');
+          aiImageStageWrapper.classList.add('hidden');
+          viewModeTabsWrapper.classList.remove('hidden');
+          downloadSvgBtn.classList.remove('hidden');
+
+          const previewDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(state.currentSvg);
+          updateMiniPreviews(previewDataUri);
+
+          // If Realistic style was active, switch back to Flat Icon since Realistic requires AI Image
+          if (state.selectedStyleKey === 'realistic') {
+            const flatPill = document.querySelector('.style-pill[data-style-key="flat"]');
+            if (flatPill) selectStylePill(flatPill, false);
+          }
+          styleHintText.textContent = 'Works in both modes';
+        } else {
+          modeAiBtn.className = 'py-2 px-3 rounded-full bg-teal-500/25 border border-teal-400/50 text-xs font-bold text-white transition flex flex-col items-center justify-center gap-0.5 cursor-pointer';
+          modeAiBtn.querySelector('span:last-child').className = 'text-[10px] font-normal text-teal-200/85';
+
+          modeVectorBtn.className = 'py-2 px-3 rounded-full border border-transparent hover:bg-white/[0.05] text-xs font-semibold text-slate-400 hover:text-white transition flex flex-col items-center justify-center gap-0.5 cursor-pointer';
+          modeVectorBtn.querySelector('span:last-child').className = 'text-[10px] font-normal text-slate-500';
+
+          modeHelperBadge.textContent = 'AI Image Engine';
+          modeHelperBadge.className = 'text-[11px] font-mono text-teal-400';
+          generateBtnLabel.textContent = 'Generate AI Image';
+          lineCountText.textContent = 'AI Image Mode';
+
+          // Force canvas preview in AI raster mode (no XML code for raster images)
+          setViewMode('canvas');
+          viewModeTabsWrapper.classList.add('hidden');
+          downloadSvgBtn.classList.add('hidden');
+
+          if (state.currentAiDataUrl) {
+            svgStageWrapper.classList.add('hidden');
+            aiImageStageWrapper.classList.remove('hidden');
+            updateMiniPreviews(state.currentAiDataUrl);
+          }
+
+          if (forceReason) {
+            styleHintText.textContent = forceReason;
+            setStatus(forceReason, 'success');
+          } else {
+            styleHintText.textContent = 'AI Image active';
+          }
+        }
+      }
+
+      modeVectorBtn.addEventListener('click', () => {
+        setEngineMode('vector');
+        setStatus('Switched to Coded Vector (SVG) mode.', 'neutral');
+      });
+
+      modeAiBtn.addEventListener('click', () => {
+        setEngineMode('ai');
+        setStatus('Switched to AI Image mode for detailed or realistic art.', 'neutral');
+      });
+
+      // =========================================================================
+      // SVG SANITIZATION, STAGE RENDERING & HISTORY
+      // =========================================================================
+      function renderSvgToStage(rawCode, historyLabel = null) {
+        let cleaned = rawCode.trim();
+        // Strip markdown fences if present
+        cleaned = cleaned.replace(/^```(?:svg|xml|html)?\s*/i, '').replace(/```\s*$/i, '').trim();
+
+        const match = cleaned.match(/<svg[\s\S]*?<\/svg>/i);
+        if (!match) {
+          setStatus('Invalid <svg> markup. Verify tags in SVG Code view.', 'error');
+          return false;
+        }
+
+        let svgMarkup = match[0];
+        if (!/xmlns="http:\/\/www\.w3\.org\/2000\/svg"/i.test(svgMarkup)) {
+          svgMarkup = svgMarkup.replace(/^<svg/i, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        if (!/viewBox=/i.test(svgMarkup)) {
+          svgMarkup = svgMarkup.replace(/^<svg/i, `<svg viewBox="0 0 ${state.width} ${state.height}"`);
+        }
+
+        // Parse via DOMParser to guarantee well-formed XML before injecting
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svgMarkup, 'image/svg+xml');
+        const parserError = doc.querySelector('parsererror');
+        if (parserError) {
+          setStatus('SVG XML syntax error detected. Check unclosed tags in SVG Code.', 'error');
+          return false;
+        }
+
+        const svgEl = doc.documentElement;
+
+        // Detect native viewBox dimensions if manually edited in SVG Code tab
+        const vbAttr = svgEl.getAttribute('viewBox');
+        if (vbAttr) {
+          const parts = vbAttr.trim().split(/[\s,]+/).map(Number);
+          if (parts.length === 4 && parts[2] > 0 && parts[3] > 0) {
+            const vbW = Math.round(parts[2]);
+            const vbH = Math.round(parts[3]);
+            if (vbW !== state.width || vbH !== state.height) {
+              const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+              const d = gcd(vbW, vbH);
+              const computedRatio = `${vbW / d}:${vbH / d}`;
+              syncViewportDimensions(vbW, vbH, computedRatio);
+            }
+          }
+        }
+
+        svgEl.setAttribute('width', '100%');
+        svgEl.setAttribute('height', '100%');
+        svgEl.style.display = 'block';
+
+        svgStageWrapper.innerHTML = '';
+        svgStageWrapper.appendChild(document.importNode(svgEl, true));
+        svgStageWrapper.classList.remove('hidden');
+        aiImageStageWrapper.classList.add('hidden');
+
+        // Update live 16px, 32px, and 64px small-scale icon previews
+        const previewDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgMarkup);
+        updateMiniPreviews(previewDataUri);
+
+        state.currentSvg = svgMarkup;
+        svgCodeEditor.value = svgMarkup;
+        lineCountText.textContent = `${svgMarkup.split('\n').length} lines`;
+
+        if (historyLabel) {
+          addToHistory({
+            type: 'vector',
+            svgCode: svgMarkup,
+            thumbUrl: previewDataUri,
+            label: historyLabel,
+            width: state.width,
+            height: state.height,
+            aspectRatio: state.aspectRatio
+          });
+        }
+        return true;
+      }
+
+      function renderAiImageToStage(dataUrl, historyLabel = null) {
+        state.currentAiDataUrl = dataUrl;
+        aiGeneratedImg.src = dataUrl;
+        svgStageWrapper.classList.add('hidden');
+        aiImageStageWrapper.classList.remove('hidden');
+        updateMiniPreviews(dataUrl);
+
+        if (historyLabel) {
+          addToHistory({
+            type: 'ai',
+            dataUrl,
+            thumbUrl: dataUrl,
+            label: historyLabel,
+            width: state.width,
+            height: state.height,
+            aspectRatio: state.aspectRatio
+          });
+        }
+      }
+
+      function addToHistory(entry) {
+        state.history.unshift(entry);
+        renderHistory();
+      }
+
+      function renderHistory() {
+        historyStrip.innerHTML = '';
+        if (state.history.length === 0) {
+          const emptyHint = document.createElement('span');
+          emptyHint.className = 'text-[11px] text-slate-500 italic';
+          emptyHint.textContent = 'No creations yet — make your first image above.';
+          historyStrip.appendChild(emptyHint);
+          return;
+        }
+        state.history.forEach((item) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.title = `${item.label} (${item.type === 'ai' ? 'AI Image' : 'Vector'} · ${item.aspectRatio})`;
+          btn.className = 'w-11 h-11 rounded-lg overflow-hidden border border-white/[0.12] hover:border-violet-400 bg-[#111116] shrink-0 transition p-0.5 cursor-pointer relative';
+
+          const img = document.createElement('img');
+          img.src = item.thumbUrl;
+          img.alt = item.label;
+          img.className = 'w-full h-full object-cover rounded-[5px]';
+
+          btn.appendChild(img);
+          btn.addEventListener('click', () => {
+            syncViewportDimensions(item.width, item.height, item.aspectRatio);
+            if (item.type === 'ai') {
+              setEngineMode('ai');
+              renderAiImageToStage(item.dataUrl, null);
+              setStatus(`Loaded AI Image "${item.label}" (${item.aspectRatio})`, 'neutral');
+            } else {
+              setEngineMode('vector');
+              renderSvgToStage(item.svgCode, null);
+              setStatus(`Loaded Vector "${item.label}" (${item.aspectRatio})`, 'neutral');
+            }
+          });
+          historyStrip.appendChild(btn);
+        });
+      }
+
+      // =========================================================================
+      // VIEW MODE SWITCHING (CANVAS PREVIEW | SVG CODE | SPLIT VIEW)
+      // =========================================================================
+      function setViewMode(mode) {
+        state.viewMode = mode;
+
+        // Reset tab styles
+        [viewCanvasBtn, viewCodeBtn, viewSplitBtn].forEach((btn) => {
+          btn.className = 'view-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-400 hover:text-white transition cursor-pointer';
+        });
+
+        if (mode === 'canvas') {
+          viewCanvasBtn.className = 'view-tab px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.14] text-white transition cursor-pointer';
+          viewportBody.className = 'grid grid-cols-1 min-h-[460px] sm:min-h-[520px]';
+          canvasPane.classList.remove('hidden');
+          codePane.classList.add('hidden');
+          codePane.classList.remove('flex', 'lg:border-l');
+        } else if (mode === 'code') {
+          viewCodeBtn.className = 'view-tab px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.14] text-white transition cursor-pointer';
+          viewportBody.className = 'grid grid-cols-1 min-h-[460px] sm:min-h-[520px]';
+          canvasPane.classList.add('hidden');
+          codePane.classList.remove('hidden', 'lg:border-l');
+          codePane.classList.add('flex');
+        } else {
+          viewSplitBtn.className = 'view-tab px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.14] text-white transition cursor-pointer';
+          viewportBody.className = 'grid grid-cols-1 xl:grid-cols-2 min-h-[460px] sm:min-h-[520px]';
+          canvasPane.classList.remove('hidden');
+          codePane.classList.remove('hidden');
+          codePane.classList.add('flex', 'xl:border-l');
+        }
+      }
+
+      viewCanvasBtn.addEventListener('click', () => setViewMode('canvas'));
+      viewCodeBtn.addEventListener('click', () => setViewMode('code'));
+      viewSplitBtn.addEventListener('click', () => setViewMode('split'));
+
+      // Circle Mask Toggle
+      circleMaskToggleBtn.addEventListener('click', () => {
+        state.circleMask = !state.circleMask;
+        if (state.circleMask) {
+          circleMaskGuide.classList.remove('hidden');
+          circleMaskToggleBtn.className = 'h-8 px-3.5 rounded-full bg-teal-500/20 border border-teal-400/60 text-xs font-semibold text-teal-300 transition flex items-center gap-1.5 cursor-pointer';
+        } else {
+          circleMaskGuide.classList.add('hidden');
+          circleMaskToggleBtn.className = 'h-8 px-3.5 rounded-full bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-300 transition flex items-center gap-1.5 cursor-pointer';
+        }
+      });
+
+      // Checkerboard vs Studio Dots Toggle
+      bgPatternToggleBtn.addEventListener('click', () => {
+        state.checkerboard = !state.checkerboard;
+        if (state.checkerboard) {
+          canvasPane.classList.remove('bg-studio-grid');
+          canvasPane.classList.add('bg-checkerboard');
+          bgPatternToggleBtn.textContent = 'Grid: Checker';
+        } else {
+          canvasPane.classList.remove('bg-checkerboard');
+          canvasPane.classList.add('bg-studio-grid');
+          bgPatternToggleBtn.textContent = 'Grid: Dots';
+        }
+      });
+
+      // Checkerboard vs Studio Grid Toggle
+      bgPatternToggleBtn.addEventListener('click', () => {
+        state.checkerboard = !state.checkerboard;
+        if (state.checkerboard) {
+          canvasPane.classList.remove('bg-studio-grid');
+          canvasPane.classList.add('bg-checkerboard');
+          bgPatternToggleBtn.textContent = 'Grid: Checker';
+        } else {
+          canvasPane.classList.remove('bg-checkerboard');
+          canvasPane.classList.add('bg-studio-grid');
+          bgPatternToggleBtn.textContent = 'Grid: Dark';
+        }
+      });
+
+      // Zoom Slider
+      zoomRange.addEventListener('input', (e) => {
+        const pct = parseInt(e.target.value, 10);
+        state.zoom = pct / 100;
+        zoomReadout.textContent = `${pct}%`;
+        svgStageWrapper.style.transform = `scale(${state.zoom})`;
+        aiImageStageWrapper.style.transform = `scale(${state.zoom})`;
+      });
+
+      // =========================================================================
+      // CODE INSPECTOR & EXPORTS (.SVG & PNG ONLY — NO HTML SOURCE EXPORT)
+      // =========================================================================
+      applyEditsBtn.addEventListener('click', () => {
+        if (renderSvgToStage(svgCodeEditor.value, 'Manual SVG Edit')) {
+          setStatus('Applied manual SVG edits to stage.', 'success');
+        }
+      });
+
+      downloadSvgBtn.addEventListener('click', () => {
+        const blob = new Blob([state.currentSvg], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bitgen-${state.width}x${state.height}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setStatus(`Downloaded bitgen-${state.width}x${state.height}.svg`, 'success');
+      });
+
+      function exportPngRaster(multiplier) {
+        const targetWidth = state.width * multiplier;
+        const targetHeight = state.height * multiplier;
+
+        // If AI Image mode is active and an AI raster image is displayed, draw it directly onto export canvas
+        if (state.engineMode === 'ai' && state.currentAiDataUrl) {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+            canvas.toBlob((pngBlob) => {
+              if (!pngBlob) return;
+              const pngUrl = URL.createObjectURL(pngBlob);
+              const a = document.createElement('a');
+              a.href = pngUrl;
+              a.download = `bitgen-ai-${targetWidth}x${targetHeight}.png`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(pngUrl);
+              setStatus(`Downloaded bitgen-ai-${targetWidth}x${targetHeight}.png`, 'success');
+            }, 'image/png');
+          };
+          img.onerror = () => setStatus('Unable to export AI image to PNG.', 'error');
+          img.src = state.currentAiDataUrl;
+          return;
+        }
+
+        // Otherwise rasterize Coded Vector SVG to PNG
+        let exportSvg = state.currentSvg;
+        exportSvg = exportSvg.replace(/<svg([^>]*)>/i, (fullMatch, attrs) => {
+          const cleanedAttrs = attrs
+            .replace(/\swidth="[^"]*"/gi, '')
+            .replace(/\sheight="[^"]*"/gi, '');
+          return `<svg${cleanedAttrs} width="${targetWidth}" height="${targetHeight}">`;
+        });
+
+        const svgBlob = new Blob([exportSvg], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        const img = new Image();
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+          URL.revokeObjectURL(url);
+
+          canvas.toBlob((pngBlob) => {
+            if (!pngBlob) return;
+            const pngUrl = URL.createObjectURL(pngBlob);
+            const a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = `bitgen-${targetWidth}x${targetHeight}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(pngUrl);
+            setStatus(`Downloaded bitgen-${targetWidth}x${targetHeight}.png`, 'success');
+          }, 'image/png');
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          setStatus('Unable to rasterize SVG to PNG.', 'error');
+        };
+
+        img.src = url;
+      }
+
+      downloadPng1xBtn.addEventListener('click', () => exportPngRaster(1));
+      downloadPng2xBtn.addEventListener('click', () => exportPngRaster(2));
+
+      // Initialize stage with neutral bitGEN geometric prism SVG at 1:1 (512x512) without polluting user recents
+      syncViewportDimensions(512, 512, '1:1');
+      renderSvgToStage(DEFAULT_BITGEN_SVG, null);
+      renderHistory();
+    });
+  </script>
+</body>
+</html>
